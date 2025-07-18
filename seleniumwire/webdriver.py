@@ -295,14 +295,17 @@ class Remote(InspectRequestsMixin, DriverCommonMixin, _Remote):
         config = self._setup_backend(seleniumwire_options)
 
         if seleniumwire_options.get('auto_config', True):
-            capabilities = kwargs.get('desired_capabilities')
-            if capabilities is None:
-                capabilities = DesiredCapabilities.FIREFOX.copy()
-            else:
-                capabilities = capabilities.copy()
-
-            capabilities.update(config)
-
-            kwargs['desired_capabilities'] = capabilities
+            options = kwargs.get('options')
+            if options is None:
+                from selenium.webdriver.chrome.options import Options as ChromeOptions
+                options = ChromeOptions()
+                kwargs['options'] = options
+        
+            # Adiciona as capabilities do config no objeto options
+            for key, value in config.items():
+                options.set_capability(key, value)
+        
+            # Garante que não vai passar desired_capabilities para o construtor!
+            kwargs.pop('desired_capabilities', None)
 
         super().__init__(*args, **kwargs)
