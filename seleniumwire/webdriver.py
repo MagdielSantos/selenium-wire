@@ -305,7 +305,4 @@ class Remote(InspectRequestsMixin, DriverCommonMixin, _Remote):
             for key, value in config.items():
                 options.set_capability(key, value)
         
-            # Garante que não vai passar desired_capabilities para o construtor!
-            kwargs.pop('desired_capabilities', None)
-
         super().__init__(*args, **kwargs)
